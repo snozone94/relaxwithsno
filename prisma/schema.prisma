@@ -1,0 +1,100 @@
+// Prisma schema for the relaxwithsno platform.
+// This defines basic user, creator and post models.  It is not
+// exhaustive but can be extended as your project grows.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          String   @id @default(cuid())
+  email       String   @unique
+  role        Role     @default(FAN)
+  ageVerified Boolean  @default(false)
+  kycStatus   KycStatus @default(NOT_REQUIRED)
+  blocks      Block[]  @relation("UserBlocks")
+  createdAt   DateTime @default(now())
+  profile     CreatorProfile?
+}
+
+model CreatorProfile {
+  id            String  @id @default(cuid())
+  userId        String  @unique
+  displayName   String
+  bio           String?
+  country       String?
+  kycVendorId   String?
+  user          User    @relation(fields: [userId], references: [id])
+  posts         Post[]
+}
+
+model Post {
+  id         String   @id @default(cuid())
+  creatorId  String
+  title      String
+  priceCents Int
+  mediaKey   String
+  previewKey String?
+  status     PostStatus @default(PUBLISHED)
+  createdAt  DateTime  @default(now())
+  creator    CreatorProfile @relation(fields: [creatorId], references: [id])
+  purchases  Purchase[]
+}
+
+model Purchase {
+  id        String   @id @default(cuid())
+  postId    String
+  buyerId   String
+  amountCents Int
+  processor String
+  txnId     String   @unique
+  createdAt DateTime @default(now())
+  post      Post     @relation(fields: [postId], references: [id])
+  buyer     User     @relation(fields: [buyerId], references: [id])
+}
+
+model Subscription {
+  id          String   @id @default(cuid())
+  creatorId   String
+  fanId       String
+  status      String
+  currentPeriodEnd DateTime
+  processorSubId String @unique
+  creator     CreatorProfile @relation(fields: [creatorId], references: [id])
+  fan         User     @relation(fields: [fanId], references: [id])
+}
+
+model Block {
+  id        String  @id @default(cuid())
+  creatorId String
+  fanId     String?
+  ipHash    String?
+  reason    String?
+  createdAt DateTime @default(now())
+  creator   CreatorProfile @relation(fields: [creatorId], references: [id])
+  user      User?     @relation("UserBlocks", fields: [fanId], references: [id])
+}
+
+enum Role {
+  FAN
+  CREATOR
+  ADMIN
+}
+
+enum KycStatus {
+  NOT_REQUIRED
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum PostStatus {
+  DRAFT
+  PUBLISHED
+  REMOVED
+}
