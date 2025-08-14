@@ -20,6 +20,18 @@ model User {
   blocks      Block[]  @relation("UserBlocks")
   createdAt   DateTime @default(now())
   profile     CreatorProfile?
+
+  // Notification preferences
+  /// Whether the user opts in to email notifications.
+  emailNotifications Boolean? @default(false)
+  /// Whether the user opts in to push notifications.
+  pushNotifications Boolean? @default(false)
+
+  // Security settings
+  /// Enable two‑factor authentication for this account.
+  twoFactorEnabled Boolean? @default(false)
+  /// Hide the profile from public discovery.
+  hideProfile      Boolean? @default(false)
 }
 
 model CreatorProfile {
@@ -31,6 +43,12 @@ model CreatorProfile {
   kycVendorId   String?
   user          User    @relation(fields: [userId], references: [id])
   posts         Post[]
+
+  // Monetisation settings
+  /// Monthly subscription price in cents. Null means free.
+  subscriptionPriceCents Int?
+  /// Preferred payout method for this creator (e.g. bank, PayPal, crypto).
+  payoutMethod          String?
 }
 
 model Post {
