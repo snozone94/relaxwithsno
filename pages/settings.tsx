@@ -50,6 +50,46 @@ export default function Settings() {
           </label>
           <button>Save Preferences</button>
         </section>
+
+        {/* Upload media section */}
+        <section className="settings-section">
+          <h2>Upload Media</h2>
+          <p>Select photos or videos to upload from any device. These files
+            could be images or short clips that your fans can purchase or
+            subscribe to. On mobile devices, this control will allow you to
+            choose files from your camera roll or capture new content on the fly.
+          </p>
+          <input
+            type="file"
+            multiple
+            accept="image/*,video/*"
+          />
+          <button>Upload Files</button>
+        </section>
+
+        {/* Payout & billing section */}
+        <section className="settings-section">
+          <h2>Payout & Billing</h2>
+          <label htmlFor="payoutMethod">Preferred payout method</label>
+          <select id="payoutMethod">
+            <option value="bank">Bank Transfer</option>
+            <option value="paypal">PayPal</option>
+            <option value="crypto">Crypto (e.g. USDT)</option>
+          </select>
+          <button>Save Payout Info</button>
+        </section>
+
+        {/* Security & privacy section */}
+        <section className="settings-section">
+          <h2>Security & Privacy</h2>
+          <label>
+            <input type="checkbox" /> Enable two-factor authentication
+          </label>
+          <label>
+            <input type="checkbox" /> Hide my profile from public search
+          </label>
+          <button>Save Security Settings</button>
+        </section>
       </div>
     </Layout>
   );
